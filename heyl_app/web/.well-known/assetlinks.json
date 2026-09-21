@@ -1,0 +1,14 @@
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "ai.heyl.heyl_app",
+      "sha256_cert_fingerprints": [
+        "16:D4:7B:2E:29:58:D1:C2:C7:82:B7:45:39:6F:2F:9E:DE:5E:89:B9:6A:EA:DE:9D:3D:01:86:07:7C:81:EB:68"
+      ]
+    }
+  }
+]

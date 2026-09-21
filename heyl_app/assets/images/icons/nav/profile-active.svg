@@ -1,0 +1,6 @@
+<svg width="20" height="20" overflow="visible" style="display: block;" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="ProfileActive">
+<circle id="Head" cx="10" cy="6.5" r="3.5" fill="#44131D"/>
+<path id="Shoulders" d="M3.5 17.25C3.5 14.077 6.41015 11.5 10 11.5C13.5899 11.5 16.5 14.077 16.5 17.25C16.5 17.4433 16.3433 17.6 16.15 17.6H3.85C3.65670 17.6 3.5 17.4433 3.5 17.25Z" fill="#44131D"/>
+</g>
+</svg>

@@ -1,0 +1,29 @@
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appID": "K37TBZ83HK.ai.heyl.heylApp",
+        "paths": [
+          "/venues/*",
+          "/events/*",
+          "/lists/*",
+          "/u/*",
+          "/chat",
+          "/drop",
+          "/weekly-bundle",
+          "/user-profiling/flow",
+          "/yours",
+          "/map",
+          "/activate",
+          "/auth/activate",
+          "/reset-password",
+          "/auth/reset-password",
+          "/auth/callback",
+          "/integrations/instagram",
+          "/profile/business-connections"
+        ]
+      }
+    ]
+  }
+}

@@ -50,3 +50,10 @@ app.*.map.json
 .fvm/
 .context/
 lib/l10n/app_localizations*.dart
+
+# The real app generates its own localisation bindings.
+heyl_app/lib/l10n/generated/
+heyl_app/.dart_tool/
+heyl_app/build/
+heyl_app/.flutter-plugins*
+.fvmrc

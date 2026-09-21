@@ -1,0 +1,21 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+    <application>
+        <!-- FileProvider that serves the sticker/background PNGs the plugin
+             writes into the app's cacheDir over to Instagram (and other
+             recipients) as `content://` URIs. Without this <provider>, the
+             `FileProvider.getUriForFile(...)` call in SocialSharePlugin.kt
+             throws IllegalArgumentException at share time and the IG Story
+             handoff silently fails on Android. -->
+        <provider
+            android:name="com.shekarmudaliyar.social_share.SocialSharePluginFileProvider"
+            android:authorities="${applicationId}.com.shekarmudaliyar.social_share"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/filepaths" />
+        </provider>
+    </application>
+    <meta-data android:name="flutterEmbedding" android:value="2"/>
+</manifest>

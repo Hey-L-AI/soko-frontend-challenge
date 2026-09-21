@@ -6,8 +6,9 @@ Improve the experience of discovering and choosing something to do in Lisbon.
 We want to understand how you reason about usability, turn ideas into working Flutter
 code, and use tools to check your decisions.
 
-You have a working, simplified app with fictional data. You can change its UI, copy,
-interactions and code structure. You do not need to recreate the full Soko app.
+You have an isolated copy of the actual Soko Flutter app connected to backend-staging.
+Work in its existing codebase: review a real user journey and improve its UI, copy or
+interactions. You are not expected to redesign or understand the entire application.
 
 ## Time box
 
@@ -21,7 +22,7 @@ The bonus is optional and must fit inside the same limit.
 
 ## 1. Review the experience
 
-Imagine it is Friday, 25 September 2026. Your task:
+Pick one real user journey in Soko to study. For example:
 
 > Find something you would enjoy doing in Lisbon this weekend, understand the
 > practical details, and save it so you can return to it later.
@@ -50,8 +51,9 @@ reasoning and thoughtful execution; neither change needs to be a large feature.
 
 ## 3. Implement both in Flutter
 
-Make your changes in this standalone app. Keep the journey working: discover an event,
-open its details, save it, find it in Saved, and remove it again.
+Implement your changes in the existing Flutter screens and components. Keep the
+chosen journey working from beginning to end. Explain which parts you touched and
+how you checked for regressions.
 
 The required target is **Flutter web**, reviewed at mobile and desktop widths. Consider
 accessibility and relevant edge cases. Explain how you verified the changed behaviour;
@@ -59,7 +61,9 @@ add focused automated tests where they give useful confidence.
 
 You may add packages or change the architecture if useful. You are not expected to
 add a backend, authentication, maps, payments, deployment or native mobile builds.
-Keep the app runnable with the provided local fixtures and no credentials.
+Keep the existing backend-staging connection and API contract. Use your own staging
+account; do not change shared data or other users’ content. Your interviewer will
+help with account access before the timed exercise.
 
 ## 4. Show how you used tools
 

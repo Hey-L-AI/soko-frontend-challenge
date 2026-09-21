@@ -1,0 +1,33 @@
+# HTML - always fresh
+/index.html
+  Cache-Control: no-cache, no-store, must-revalidate
+
+# Flutter loader chain - always revalidate (small files, change every build)
+/flutter_bootstrap.js
+  Cache-Control: no-cache, must-revalidate
+/flutter.js
+  Cache-Control: no-cache, must-revalidate
+
+# Compiled app code - short cache (large file, changes every build)
+/main.dart.js
+  Cache-Control: public, max-age=3600
+
+# Service worker - always revalidate
+/flutter_service_worker.js
+  Cache-Control: no-cache, must-revalidate
+
+# CanvasKit - moderate cache (changes only on Flutter SDK upgrade)
+/canvaskit/*
+  Cache-Control: public, max-age=86400
+
+# Static assets - long cache (content-addressed by Flutter build)
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Other static files
+/manifest.json
+  Cache-Control: public, max-age=3600
+/icons/*
+  Cache-Control: public, max-age=604800
+/*.css
+  Cache-Control: public, max-age=86400

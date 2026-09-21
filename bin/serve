@@ -1,0 +1,25 @@
+#!/usr/bin/env python3
+"""Serve the real app's web build with GoRouter's path fallback."""
+from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
+from pathlib import Path
+from urllib.parse import urlsplit
+
+BUILD = Path(__file__).resolve().parents[1] / 'heyl_app' / 'build' / 'web'
+
+
+class Handler(SimpleHTTPRequestHandler):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, directory=str(BUILD), **kwargs)
+
+    def do_GET(self):
+        path = Path(self.translate_path(urlsplit(self.path).path))
+        if not path.exists() and '.' not in path.name:
+            self.path = '/index.html'
+        super().do_GET()
+
+
+if __name__ == '__main__':
+    if not (BUILD / 'index.html').exists():
+        raise SystemExit('Run flutter build web from heyl_app first.')
+    print('Soko interview app: http://localhost:3001', flush=True)
+    ThreadingHTTPServer(('127.0.0.1', 3001), Handler).serve_forever()

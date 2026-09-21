@@ -1,0 +1,33 @@
+// Vendored copy of social_share 2.3.1 (pub.dev) with three fixes needed to
+// build under Flutter 3.38 + AGP 8:
+//   1. Declare `namespace` (required by AGP 8; upstream still relies on the
+//      removed `package=` attribute in AndroidManifest.xml).
+//   2. Bump compileSdk 28 -> 35 so Java 9+ source in transitive deps compiles.
+//   3. Rely on the host project's kotlin/gradle plugin management — no local
+//      buildscript classpath, no `jcenter()`.
+// The Kotlin source is patched separately (unused Registrar import removed).
+group 'com.shekarmudaliyar.social_share'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+
+android {
+    namespace 'com.shekarmudaliyar.social_share'
+    compileSdkVersion 35
+
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+    }
+    defaultConfig {
+        minSdkVersion 21
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+    lintOptions {
+        disable 'InvalidPackage'
+    }
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.9.0"
+}
