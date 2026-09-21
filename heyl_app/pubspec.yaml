@@ -1,0 +1,256 @@
+name: heyl_app
+description: "Soko - Your street-smart insider"
+publish_to: 'none'
+version: 1.1.29+134
+
+environment:
+  sdk: ^3.9.2
+
+dependencies:
+  sentry_flutter: ^9.9.1
+  flutter:
+    sdk: flutter
+  flutter_web_plugins:
+    sdk: flutter
+
+  # Web support
+  web: ^1.0.0
+  flutter_localizations:
+    sdk: flutter
+
+  # UI
+  cupertino_icons: ^1.0.8
+  smooth_page_indicator: ^2.0.1
+  flutter_lucide: 1.8.1  # Pinned — upstream removed instagram/facebook brand icons starting in 1.8.2
+  infinite_carousel: ^1.1.1  # Seamless infinite scrolling carousel
+  auto_size_text: ^3.0.0  # Auto-fitting text used by zine cover title (PROD-1908)
+  showcaseview: ^5.0.2  # Coachmark spotlights for product tour
+  qr_flutter: ^4.1.0  # Profile QR code (share in person) — native Find people
+
+  # State Management
+  flutter_riverpod: ^2.6.1
+
+  # Navigation
+  go_router: ^14.6.2
+
+  # Networking
+  dio: ^5.7.0
+  dio_cookie_manager: ^3.1.1
+  cookie_jar: ^4.0.8
+  http: ^1.2.2  # For SSE streaming
+
+  # Storage
+  flutter_secure_storage: ^9.2.2
+  shared_preferences: ^2.3.3
+
+  # Code Generation (annotations)
+  json_annotation: ^4.9.0
+
+  # Image Caching & Loading
+  cached_network_image: ^3.4.1
+  shimmer: ^3.0.0
+
+  # Image Capture (PROD-2404 — photo→event contribution; web/iOS/Android)
+  image_picker: ^1.1.2
+
+  # Audio Recording & Playback
+  record: ^6.0.0
+  just_audio: ^0.9.40
+  path_provider: ^2.1.4
+
+  # Accelerometer — shake-to-open the feedback sheet (PROD-2953)
+  sensors_plus: ^6.0.0
+
+  # Location & Permissions
+  geolocator: ^13.0.2
+  geocoding: ^4.0.0  # Native reverse geocoding (city from coordinates)
+  permission_handler: ^11.3.1
+
+  # Maps
+  latlong2: ^0.9.1
+  mapbox_maps_flutter: ^2.4.0
+  # PROD-2671: lets Flutter overlays (Map-page filter bar + results sheet)
+  # capture pointer/drag events on web so the Mapbox GL canvas (an
+  # HtmlElementView) doesn't steal them — without it, dragging the sheet
+  # pans the map instead of expanding the sheet.
+  pointer_interceptor: ^0.10.1
+  map_launcher: ^4.4.2  # Cross-platform map app launcher (Apple Maps, Google Maps, etc.)
+  flutter_svg: ^2.0.10+1  # For map app icons in picker
+
+  # Utils
+  intl: ^0.20.1
+  uuid: ^4.5.1
+  collection: ^1.19.0
+  # Unicode NFC normalization for note-length parity with the backend's
+  # note-transition contract (PROD-4553): note_length counts code points of the
+  # NFC-normalized, trimmed note, matching heyl-backend's normalize_note().
+  unorm_dart: ^0.3.2
+  package_info_plus: ^9.0.0  # For app version tracking in analytics
+  # PROD-2853 — read the Google Play Install Referrer once on first Android
+  # launch so a UTM-tagged QR scan → Play Store install → app launch keeps its
+  # attribution. Bridge side (soko.fyi/get) writes UTMs into the Play Store
+  # URL's `referrer=` param; this plugin wraps Google's Play Install Referrer
+  # Library so the app can read them back. Android-only — throws on iOS and on
+  # Android without Play Services (both handled in attribution_service.dart).
+  play_install_referrer: ^0.5.0
+
+  # Text & Links
+  url_launcher: ^6.3.0
+  flutter_linkify: ^6.0.0
+  # 7.0.0 adds iOS 13+ Scene-lifecycle support: it registers via
+  # addSceneDelegate so FlutterSceneDelegate forwards cold-start Universal Links
+  # (scene willConnectTo) to it. 6.x only hooked the legacy UIApplicationDelegate,
+  # so cold-start Universal Links were silently lost on the Scene lifecycle.
+  # Pinned <7.1.0 — 7.1.x requires Flutter 3.44; we pin below that (see
+  # `.flutter-version` at the repo root — the one source of truth). See
+  # docs/learnings/applinks-ios-scene-lifecycle-coldstart.md.
+  app_links: ">=7.0.0 <7.1.0"
+  app_tracking_transparency: ^2.0.6+1
+
+  # iOS Features
+  share_plus: ^7.2.2
+  connectivity_plus: ^5.0.2
+  receive_sharing_intent: ^1.8.1
+  # Outbound Instagram Story share (PROD-2785).
+  # 2.3.1 is the latest published version; last updated ~3 years ago and
+  # carries an "unverified uploader" badge on pub.dev. The API still matches
+  # IG's documented contract — shareInstagramStory(imagePath, topColor,
+  # bottomColor, deepLink) → instagram-stories:// scheme + UIPasteboard
+  # background/colors on iOS, Intent ADD_TO_STORY on Android. The Phase 1
+  # decision gate (docs/investigations/context/prod-2785-...md §5) covers
+  # pivoting to a thin MethodChannel if sticker/attribution fidelity blocks.
+  # Vendored under third_party/social_share with three patches to build on
+  # Flutter 3.38 + AGP 8: namespace, compileSdk 35, and removal of the dead
+  # v1-embedding Registrar import. See CHANGELOG note in the vendored dir.
+  social_share:
+    path: third_party/social_share
+
+  # Save the BE-rendered share PNG to the device photo library from the
+  # `Save image` channel in `SokoShareSheet`. Wraps iOS `PHPhotoLibrary`
+  # and Android MediaStore under one API; handles the permission request
+  # internally. Web falls through to a browser download helper — `gal`
+  # itself is native-only, so imports are gated by the conditional
+  # `save_image_helper` triad under `lib/features/share/utils/`.
+  gal: ^2.3.1
+
+  firebase_core: ^4.3.0
+  firebase_analytics: ^12.1.0
+
+  # Analytics & A/B Testing
+  posthog_flutter: ^5.13.0
+
+  # AppsFlyer MMP — install attribution + funnel-event forwarding (PROD-3533).
+  # Floor 6.18.0: 6.17.9 added iOS Scene-lifecycle support (repo is on
+  # FlutterSceneDelegate), 6.18.0 fixed Android warm deep-link consumption
+  # (MainActivity is singleTop). Latest known good: 6.18.1.
+  appsflyer_sdk: ">=6.18.0 <6.19.0"
+
+  # Authentication
+  sign_in_with_apple: ^6.1.4
+  google_sign_in: ^6.2.1
+  crypto: ^3.0.6
+  # Android SMS Retriever API — silent OTP auto-read (PROD-3323). Wraps the
+  # Play Services Retriever + getAppSignature(); Android-only, no-op elsewhere.
+  smart_auth: ^3.2.0
+  turn_page_transition: ^0.5.0
+  visibility_detector: ^0.4.0+2
+  klaviyo_flutter_sdk: ^0.2.0
+  facebook_app_events: ^0.27.2
+  firebase_messaging: ^16.2.1
+  tiktok_business_sdk: ^0.0.1
+  crop_your_image: ^2.0.0
+  # Contact discovery (mobile-only "Find contacts"): read the address book to
+  # match phone hashes against Soko users (permissions.request / getAll /
+  # contact.phones). Pinned to the 2.x line: 1.1.x force-unwraps
+  # AppDelegate.window at iOS plugin registration → crash on every launch under
+  # the FlutterSceneDelegate lifecycle (2.x resolves the root VC lazily from
+  # connectedScenes). Capped <2.2.0 — 2.2.0+ needs Dart 3.12 / Flutter 3.44, and
+  # we pin below that (see `.flutter-version`); 2.1.x ships a CocoaPods podspec
+  # so no SPM migration. See
+  # docs/learnings/flutter-contacts-ios-scene-lifecycle-crash.md.
+  flutter_contacts: ">=2.0.0 <2.2.0"
+  phone_numbers_parser: ^9.0.24
+  palette_generator: ^0.3.3+7
+
+dev_dependencies:
+  sentry_dart_plugin: ^3.2.0
+  flutter_test:
+    sdk: flutter
+  firebase_core_platform_interface: ^7.0.0
+  flutter_lints: ^5.0.0
+  mocktail: ^1.0.4
+  fake_async: ^1.3.3
+
+  # Code Generation
+  build_runner: ^2.4.13
+  json_serializable: ^6.8.0
+
+  # App Icon Generation
+  flutter_launcher_icons: ^0.14.3
+
+flutter:
+  uses-material-design: true
+  generate: true
+
+  assets:
+    - assets/images/
+    - assets/images/onboarding/
+    - assets/images/logos/
+    - assets/images/prompts/
+    - assets/images/illustrations/
+    - assets/images/personas/
+    - assets/images/personas/cards/
+    - assets/images/icons/discovery/
+    - assets/images/icons/detail/
+    - assets/images/icons/nav/
+    - assets/images/icons/memory/
+    - assets/images/icons/library/
+    - assets/images/textures/
+    # PROD-2671: Map page category pin PNGs (10 categories + pin-default).
+    - assets/pins/
+    - assets/fonts/
+    # Onboarding v2 (vibe flow) — bundled to avoid CORS on web (Lovable
+    # CDN doesn't send Access-Control-Allow-Origin). See PROD-onboarding.
+    - assets/onboarding/vibes/
+    - assets/onboarding/itinerary/
+    - assets/onboarding/rituals/
+
+  fonts:
+    - family: ZalandoSans
+      fonts:
+        - asset: assets/fonts/ZalandoSans.ttf
+    - family: UnJamoBatang
+      fonts:
+        - asset: assets/fonts/UnJamoBatang.ttf
+    - family: SunsetSerial
+      fonts:
+        - asset: assets/fonts/SunsetSerial.otf
+        - asset: assets/fonts/SunsetSerial-Light.otf
+          weight: 300
+    - family: SeasonMix
+      fonts:
+        - asset: assets/fonts/SeasonMixTRIAL-Light.ttf
+          weight: 300
+        - asset: assets/fonts/SeasonMixTRIAL-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/SeasonMixTRIAL-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/SeasonMixTRIAL-SemiBold.ttf
+          weight: 600
+
+# App Icon Configuration
+# To generate icons, replace assets/images/app_icon.png with your design and run:
+# dart run flutter_launcher_icons
+flutter_launcher_icons:
+  android: true
+  ios: true
+  remove_alpha_ios: true
+  ios_background_color: "#FFB8CB"
+  image_path: "assets/images/app_icon.png"
+  adaptive_icon_background: "#FFB8CB"
+  adaptive_icon_foreground: "assets/images/app_icon.png"
+  web:
+    generate: true
+    image_path: "assets/images/app_icon.png"
+    background_color: "#FFB8CB"
+    theme_color: "#C05A6C"

@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!--
+    If you are serving your web app in a path other than the root, change the
+    href value below to reflect the base path you are serving from.
+
+    The path provided below has to start and end with a slash "/" in order for
+    it to work correctly.
+
+    For more details:
+    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
+
+    This is a placeholder for base href that will be replaced by the value of
+    the `--base-href` argument provided to `flutter build`.
+  -->
+  <base href="$FLUTTER_BASE_HREF">
+
+  <meta charset="UTF-8">
+  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+  <meta name="description" content="Soko - Your street-smart insider">
+
+  <!-- PROD-4388 — default Open Graph card.
+       Crawlers (WhatsApp, iMessage, Signal) do not run JS, so any app.soko.fyi
+       URL pasted into a chat is previewed from THIS static head — which until
+       now carried no og:* at all, hence the bare blue link in the ticket.
+       These are the generic fallback; a *shared* link goes through
+       share.soko.fyi, where the backend emits per-subject tags instead. -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Soko">
+  <meta property="og:title" content="Soko">
+  <meta property="og:description" content="Soko - Your street-smart insider">
+  <meta property="og:image" content="icons/Icon-512.png">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Soko">
+  <meta name="twitter:description" content="Soko - Your street-smart insider">
+  <meta name="twitter:image" content="icons/Icon-512.png">
+
+  <!-- Viewport configuration for mobile - interactive-widget tells browser to resize viewport when keyboard appears -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-content">
+
+  <!-- iOS meta tags & icons -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="Soko">
+  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="favicon.png"/>
+
+  <title>Soko</title>
+  <link rel="manifest" href="manifest.json">
+
+  <!-- Preconnect to Mapbox for faster loading when map is needed -->
+  <link rel="preconnect" href="https://api.mapbox.com">
+  <link rel="dns-prefetch" href="https://api.mapbox.com">
+
+  <!-- Mapbox GL JS is now loaded on-demand by Flutter when map is needed -->
+  <!-- This saves 393KB from initial page load -->
+
+  <!-- Prevent horizontal swipe from triggering browser back navigation + keyboard fixes -->
+  <style>
+    html, body {
+      overscroll-behavior-x: contain;
+      /* PROD-2065: contain vertical overscroll so the browser's own
+         pull-to-refresh doesn't race the Flutter CupertinoSliverRefreshControl
+         on mobile web. */
+      overscroll-behavior-y: contain;
+      /* Use dynamic viewport height - accounts for mobile keyboard and browser chrome */
+      height: 100%;
+      height: 100dvh;
+      /* CSS custom property for keyboard height, set by JS fallback */
+      --keyboard-height: 0px;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Branded splash screen styles */
+    #app-loading {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background-color: #F5F1EC;
+      z-index: 9999;
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    #app-loading .logo {
+      width: 72px;
+      height: 72px;
+      margin-bottom: 24px;
+      border-radius: 16px;
+    }
+
+    #app-loading .spinner {
+      width: 28px;
+      height: 28px;
+      border: 2.5px solid #E8E2DC;
+      border-top-color: #C76274;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    /* Error message styles */
+    #app-error {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background-color: #F5F1EC;
+      padding: 24px;
+      text-align: center;
+      z-index: 9999;
+    }
+
+    #app-error .error-icon {
+      font-size: 48px;
+      color: #E53935;
+      margin-bottom: 16px;
+    }
+
+    #app-error .error-title {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-size: 20px;
+      font-weight: 600;
+      color: #212121;
+      margin: 0 0 8px 0;
+    }
+
+    #app-error .error-message {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-size: 14px;
+      color: #757575;
+      margin: 0 0 24px 0;
+      max-width: 300px;
+    }
+
+    #app-error .retry-link {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-size: 14px;
+      color: #1976D2;
+      text-decoration: none;
+      padding: 12px 24px;
+      border: 1px solid #1976D2;
+      border-radius: 8px;
+      transition: background-color 0.2s;
+    }
+
+    #app-error .retry-link:hover {
+      background-color: rgba(25, 118, 210, 0.08);
+    }
+  </style>
+</head>
+<body>
+  <!-- Branded splash screen shown while Flutter initializes -->
+  <div id="app-loading">
+    <img class="logo" src="icons/Icon-192.png" alt="Soko">
+    <div class="spinner"></div>
+  </div>
+
+  <!-- Error message shown if app fails to load -->
+  <div id="app-error">
+    <div class="error-icon">⚠️</div>
+    <h1 class="error-title">Unable to load app</h1>
+    <p class="error-message">Something went wrong. Please check your internet connection and try again.</p>
+    <a href="javascript:location.reload()" class="retry-link">Retry</a>
+  </div>
+
+  <!-- Browser integrations that must be installed before Flutter initializes -->
+  <script>
+    // Flutter Web listens for hardware-keyboard events at the window level.
+    // Register this native listbox handler before Flutter boots so keyboard
+    // navigation reaches the DOM search options instead of being consumed by
+    // the engine first.
+    (function installAreaSearchKeyboardNavigation() {
+      function isTextInput(element) {
+        if (!element) return false;
+        return element.tagName === 'INPUT' ||
+          element.tagName === 'TEXTAREA' ||
+          element.isContentEditable;
+      }
+
+      function focusOption(buttons, index) {
+        buttons.forEach(function(button, buttonIndex) {
+          var active = buttonIndex === index;
+          button.tabIndex = active ? 0 : -1;
+          button.setAttribute('aria-selected', String(active));
+        });
+        buttons[index].focus({ preventScroll: true });
+        buttons[index].scrollIntoView({ block: 'nearest' });
+      }
+
+      window.addEventListener('keydown', function(event) {
+        if (event.isComposing || event.altKey || event.ctrlKey || event.metaKey) {
+          return;
+        }
+
+        var root = document.querySelector('.heyl-area-search-results');
+        if (!root) return;
+
+        var buttons = Array.from(root.querySelectorAll('button.heyl-area-option'));
+        if (buttons.length === 0) return;
+
+        var activeElement = document.activeElement;
+        var activeIndex = buttons.indexOf(activeElement);
+
+        // Move from Flutter's text-editing element into the native listbox.
+        // Tab and Down start at the first result; Up starts at the last.
+        if (activeIndex === -1) {
+          if (!isTextInput(activeElement)) return;
+
+          var entryIndex = null;
+          if ((event.key === 'Tab' && !event.shiftKey) ||
+              event.key === 'ArrowDown') {
+            entryIndex = 0;
+          } else if (event.key === 'ArrowUp') {
+            entryIndex = buttons.length - 1;
+          }
+          if (entryIndex === null) return;
+
+          event.preventDefault();
+          event.stopImmediatePropagation();
+          root.setAttribute('data-native-focus-index', String(entryIndex));
+          root.dispatchEvent(new CustomEvent('heyl-area-search-focus-request'));
+          requestAnimationFrame(function() {
+            var currentRoot = document.querySelector('.heyl-area-search-results');
+            var currentButtons = currentRoot
+              ? Array.from(currentRoot.querySelectorAll('button.heyl-area-option'))
+              : [];
+            if (entryIndex < currentButtons.length) {
+              focusOption(currentButtons, entryIndex);
+            }
+          });
+          return;
+        }
+
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          event.stopImmediatePropagation();
+          buttons[activeIndex].click();
+          return;
+        }
+
+        var targetIndex = null;
+        if (event.key === 'ArrowDown') {
+          targetIndex = Math.min(activeIndex + 1, buttons.length - 1);
+        } else if (event.key === 'ArrowUp') {
+          targetIndex = Math.max(activeIndex - 1, 0);
+        } else if (event.key === 'Home') {
+          targetIndex = 0;
+        } else if (event.key === 'End') {
+          targetIndex = buttons.length - 1;
+        }
+        if (targetIndex === null) return;
+
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        focusOption(buttons, targetIndex);
+      }, true);
+    })();
+
+    // Use visualViewport API to detect keyboard and set CSS custom property
+    // This is a fallback for browsers that don't support interactive-widget meta tag
+    if (window.visualViewport) {
+      function updateKeyboardHeight() {
+        var keyboardHeight = window.innerHeight - window.visualViewport.height;
+        document.documentElement.style.setProperty('--keyboard-height', keyboardHeight + 'px');
+      }
+      window.visualViewport.addEventListener('resize', updateKeyboardHeight);
+      window.visualViewport.addEventListener('scroll', updateKeyboardHeight);
+    }
+
+    // App loading error handler
+    function showAppError() {
+      var loading = document.getElementById('app-loading');
+      var error = document.getElementById('app-error');
+      if (loading) loading.style.display = 'none';
+      if (error) error.style.display = 'flex';
+      clearTimeout(window._loadingTimeout);
+    }
+
+    // Hide loading indicator - called by Flutter when app is ready
+    function hideAppLoading() {
+      var loading = document.getElementById('app-loading');
+      var error = document.getElementById('app-error');
+      if (loading) loading.style.display = 'none';
+      if (error) error.style.display = 'none';
+      clearTimeout(window._loadingTimeout);
+    }
+
+    // Expose to global scope for Flutter to call
+    window.hideAppLoading = hideAppLoading;
+    window.showAppError = showAppError;
+
+    // Timeout fallback - show error if app doesn't load within 30 seconds
+    window._loadingTimeout = setTimeout(function() {
+      // Check if Flutter has taken over (loading div hidden)
+      var loading = document.getElementById('app-loading');
+      if (loading && loading.style.display !== 'none') {
+        console.error('[App] Loading timeout - Flutter did not initialize within 30 seconds');
+        showAppError();
+      }
+    }, 30000);
+
+    // Mapbox lazy loader - called from Flutter when map is first needed
+    // Saves 393KB from initial page load
+    window._mapboxLoaded = false;
+    window._mapboxLoadPromise = null;
+    window.loadMapbox = function() {
+      if (window._mapboxLoaded) {
+        return Promise.resolve();
+      }
+      if (window._mapboxLoadPromise) {
+        return window._mapboxLoadPromise;
+      }
+
+      window._mapboxLoadPromise = new Promise(function(resolve, reject) {
+        // Load CSS first
+        var link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = 'https://api.mapbox.com/mapbox-gl-js/v3.25.0/mapbox-gl.css';
+        document.head.appendChild(link);
+
+        // Load JS
+        var script = document.createElement('script');
+        script.src = 'https://api.mapbox.com/mapbox-gl-js/v3.25.0/mapbox-gl.js';
+        script.onload = function() {
+          window._mapboxLoaded = true;
+          resolve();
+        };
+        script.onerror = function() {
+          reject(new Error('Failed to load Mapbox GL JS'));
+        };
+        document.head.appendChild(script);
+      });
+
+      return window._mapboxLoadPromise;
+    };
+
+    // Check if Mapbox is loaded (for Dart interop)
+    window.isMapboxLoaded = function() {
+      return window._mapboxLoaded && typeof mapboxgl !== 'undefined';
+    };
+  </script>
+  <!-- Google Identity Services (GIS) for google_sign_in_web account picker -->
+  <script src="https://accounts.google.com/gsi/client" async></script>
+
+  <!-- Interview build: production PostHog and TikTok bootstraps removed.
+       Configure a separate PostHog project here only for the optional bonus. -->
+  <script src="flutter_bootstrap.js" async onerror="showAppError()"></script>
+</body>
+</html>

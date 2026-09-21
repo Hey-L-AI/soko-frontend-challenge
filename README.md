@@ -1,119 +1,128 @@
-# Soko frontend challenge
+# Soko Flutter frontend challenge
 
-A small Flutter app for exploring fictional Lisbon events and saving a plan for later.
-This is an isolated interview exercise, inspired by Soko's discovery experience.
-It is not a checkout of the production app.
+Work on **the actual Soko Flutter app**. This private repository contains a snapshot
+of the released `heyl-webapp` application, with its original screens, components,
+assets, Riverpod state, GoRouter navigation and API clients.
 
-**Start with [CHALLENGE.md](CHALLENGE.md).** Spend at most eight hours, including the
-review, implementation, documentation and any bonus work.
+It is an independent copy, with no deployment workflow or connection to the original
+Git repository. The app connects to **backend-staging**. Production analytics and
+marketing SDK startup are disabled. See [docs/SOURCE.md](docs/SOURCE.md) for exact
+provenance and the small set of interview-specific changes.
 
-## Run it
+Start with [CHALLENGE.md](CHALLENGE.md). Review the real app, choose two usability
+improvements, and implement them in Flutter. Maximum effort: eight hours.
 
-Install [Flutter](https://docs.flutter.dev/install) and Chrome. This starter and CI
-use **Flutter 3.38.10 / Dart 3.10.9**. Flutter includes Dart. No Android SDK, Xcode,
-backend, account or API key is needed for the required web target.
+## Run
+
+Install [Flutter](https://docs.flutter.dev/install), Chrome, Git and Python 3 (used by
+the convenience script to check the SDK version). Use the Flutter version in
+[.flutter-version](.flutter-version): **3.38.10**, including Dart 3.10.9.
+
+Accept your GitHub invitation first. Clone the repository URL supplied by your
+interviewer; if you were given a personal copy, use that URL instead:
 
 ```sh
 git clone https://github.com/Hey-L-AI/soko-frontend-challenge.git
 cd soko-frontend-challenge
-flutter pub get
-flutter gen-l10n
-flutter run -d chrome --web-port 8080
+./bin/start
 ```
 
-For a private repository, accept your GitHub invitation first and authenticate
-with GitHub CLI (`gh auth login`, then `gh auth setup-git`) or your usual Git credentials.
-If your interviewer gives you a personal repository copy, use that clone URL instead.
+The app opens at **http://localhost:3001**. Keep this port: backend-staging permits
+this local origin for API calls and authentication callbacks.
 
-If you use [FVM](https://fvm.app/), `.fvmrc` pins the same SDK:
+Equivalent commands, also suitable for Windows or FVM users:
 
 ```sh
-fvm install
-fvm flutter pub get
-fvm flutter gen-l10n
-fvm flutter run -d chrome --web-port 8080
+cd heyl_app
+flutter pub get --enforce-lockfile
+flutter gen-l10n
+flutter run -d chrome --web-port 3001
 ```
 
-Other browsers: run `flutter run -d web-server --web-port 8080` and open
-`http://localhost:8080`. Debugging and hot reload support differ by browser.
+For FVM, install the version from `.flutter-version` and prefix Flutter commands with
+`fvm`. Or set `FLUTTER_BIN` to your pinned SDK's executable before running `bin/start`.
+No Android SDK, Xcode, Docker, database or backend process is needed for web.
 
-The first dependency download needs internet access. No Soko service is contacted.
-If setup takes more than 30 minutes, contact your interviewer; setup trouble should
-not consume the exercise.
+**Internet access is required.** This is the real app using live staging services,
+not an offline demo. If setup takes over 30 minutes, contact your interviewer.
 
-## What is included
+## Account and data
 
-- Discover, search, event details, save and unsave, and a Saved tab.
-- Eight fictional events with varied dates, prices, booking and accessibility details.
-- Browser-local persistence for saved events. Use the same browser and port to retain
-  them between runs. Clearing site storage resets them; nothing syncs to a server.
-- Loading, empty and recoverable error states.
-- Responsive Flutter layouts, Soko colour tokens and locally drawn illustrations.
-- English UI strings in ARB, ready for localisation. Event content is fixture data.
-- Behaviour tests and GitHub Actions checks.
+Use your own **backend-staging account**, or an individual staging account supplied
+by your interviewer. Accounts and data are separate from backend-prod. Guest browsing
+is available, but saving and other personalised features require sign-in.
 
-The scenario is fixed: imagine it is **Friday, 25 September 2026**, planning for
-**26–27 September** in Lisbon. Dates do not depend on when you take the interview.
-All times are Lisbon wall-clock times. Names, venues and listings are fictional;
-there are no real bookings or external event links.
+The repository does not contain account credentials. Do not use a shared admin account.
+Before the timed exercise, confirm you can sign in, browse and open an item. Report
+account or staging-service problems to the interviewer instead of spending the day
+fixing backend infrastructure.
 
-## Find your way around
+Changes to frontend code affect only your copy. In-app actions operate on staging
+and can persist there. Use your own lists/content for write actions. Ordinary public
+links, imagery, Google sign-in and Mapbox still use their respective live services;
+this is not a network sandbox. The existing public Mapbox client token and style are
+retained so the actual map UI can work; no private Mapbox token is included.
 
-| Path | Purpose |
+## What is here
+
+No product feature directory has been removed. The original Flutter source includes
+discovery, chat, maps, event/venue details, zines/lists, library, profile, settings,
+onboarding and authentication. Some features depend on staging data, permissions,
+remote feature flags or native capabilities. Web is the required interview target;
+we have not included iOS/Android signing and deployment projects.
+
+| Path | Start here for |
 | --- | --- |
-| `lib/app.dart` | Discovery screen, navigation and small local state |
-| `lib/screens/event_detail.dart` | Event details and saving |
-| `lib/domain/event.dart` | Event model and search matching |
-| `lib/data/` | Local asset repository and saved-item storage |
-| `lib/widgets/` | Cards, illustrations and primary button |
-| `lib/theme.dart` | Colours and theme |
-| `lib/l10n/app_en.arb` | UI copy; run `flutter gen-l10n` after edits |
-| `assets/data/events.json` | Synthetic events |
-| `test/` | Baseline behaviour tests |
-| `docs/EXPERIMENTS.md` | Optional PostHog bonus scope |
-| `SUBMISSION.md` | Short template for your findings and decisions |
+| `heyl_app/lib/features/discovery/` | Discovery screens and feed |
+| `heyl_app/lib/features/chat/` | Conversation UI and recommendation cards |
+| `heyl_app/lib/features/map/` | Map experience |
+| `heyl_app/lib/features/event_detail/`, `venue_detail/` | Item detail screens |
+| `heyl_app/lib/features/lists/` | Zines and lists |
+| `heyl_app/lib/shared/widgets/` | Existing Soko components |
+| `heyl_app/lib/core/theme/` | Real design tokens and themes |
+| `heyl_app/lib/providers/` | Riverpod state and service wiring |
+| `heyl_app/lib/core/router/app_router.dart` | Existing navigation |
+| `heyl_app/lib/data/datasources/` | API clients and existing mocks |
+| `heyl_app/lib/l10n/intl_*.arb` | English, Portuguese and Spanish UI copy |
+| `docs/ui/` | Design-system context from the app repository |
+| `open-api/heyl-webapp-v1.openapi.yaml` | API contract snapshot |
 
-State uses Flutter's built-in `StatefulWidget`; there is no required state-management
-package. Adapt the structure if your changes justify it. The baseline is deliberately
-small, with no hidden defects you are expected to find and no prescribed improvements.
+Choose a manageable flow; you are not expected to understand the entire codebase.
+Reuse existing components. Keep new user-facing strings in the ARB files and run
+`flutter gen-l10n` after changing them.
 
-## Check your work
+## Verify
+
+From `heyl_app/`:
 
 ```sh
-flutter gen-l10n
-dart format --output=none --set-exit-if-changed lib test
-flutter analyze
+flutter analyze --no-fatal-infos --no-fatal-warnings
 flutter test
 flutter build web --no-web-resources-cdn
 ```
 
-Format edits with `dart format lib test`. Generated localisation files are ignored
-by Git and recreated by `flutter gen-l10n`.
+The source snapshot carries existing analyzer warnings/style notices. These are not
+hidden tasks for the interview; CI fails on errors, while reporting those notices.
+The included tests cover selected original components plus interview configuration.
+They are not a copy of the entire production regression suite. Add focused checks
+for your changes and describe manual validation in `SUBMISSION.md`.
 
-To exercise alternative data states, stop the current app and restart with:
-
-```sh
-# First load fails; Try again recovers.
-flutter run -d chrome --web-port 8080 --dart-define=DEMO_SCENARIO=error
-
-# Repository returns no events.
-flutter run -d chrome --web-port 8080 --dart-define=DEMO_SCENARIO=empty
-```
-
-To preview a release build locally:
+For a release-build preview, from the repository root:
 
 ```sh
-flutter build web --no-web-resources-cdn
-python3 -m http.server 8080 --directory build/web
+python3 bin/serve
 ```
+
+This serves `heyl_app/build/web` on localhost:3001 with the fallback needed by the
+app's existing URL routing. Stop `flutter run` first to free the port.
 
 ## Submit
 
-Work in the separate repository provided by your interviewer, or create your own
-private copy and share it with them. Keep your submission private unless agreed
-otherwise. You do not need write access to this starter or any Soko application repo.
+Work in your own private candidate repository. Complete [SUBMISSION.md](SUBMISSION.md),
+include before/after screenshots or a short recording, and share the repository URL
+and final commit SHA with your interviewer. A source ZIP is also acceptable.
 
-Complete `SUBMISSION.md`, include screenshots or a short demo, and send your
-interviewer the repository URL and final commit SHA. A source ZIP is also acceptable
-if repository sharing is inconvenient. Keep the lockfile and exclude build output,
-credentials, personal data and unredacted tool logs.
+Do not publish Soko's application source or assets. Do not commit credentials, build
+output, personal data or unredacted tool transcripts.
+
+[Optional PostHog experiment](docs/EXPERIMENTS.md) · [Source provenance](docs/SOURCE.md)

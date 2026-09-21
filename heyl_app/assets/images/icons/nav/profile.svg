@@ -1,0 +1,6 @@
+<svg width="20" height="20" overflow="visible" style="display: block;" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Profile">
+<circle id="Head" cx="10" cy="6.5" r="3.25" stroke="#44131D" stroke-linejoin="round"/>
+<path id="Shoulders" d="M4 16.75C4 13.99 6.686 12.5 10 12.5C13.314 12.5 16 13.99 16 16.75" stroke="#44131D" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+</svg>
